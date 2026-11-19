@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "romanos": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["/usr/lib/romanos/ai/mcp_romanos.py"]
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp"
+    }
+  }
+}

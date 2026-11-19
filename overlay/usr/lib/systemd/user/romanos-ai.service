@@ -1,0 +1,12 @@
+[Unit]
+Description=RomanOS · servicio Claude nativo
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/lib/romanos/ai/server.py
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,21 @@
+{
+  "_nota": "Proyectos Supabase del negocio. Las claves 'anon' son públicas por diseño; los datos están protegidos por RLS y se accede con el usuario de cada app (se configura en roman-setup).",
+  "inventario": {
+    "nombre": "Inventario Calama",
+    "url": "https://xgzgbwdsimfeeecefosm.supabase.co",
+    "anon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhnemdid2RzaW1mZWVlY2Vmb3NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxNzM1MjEsImV4cCI6MjEwOTc0OTUyMX0.kiIx4xtV0fFagQXJzRHqQ9VymaCVc7lB9bqwcV22DOg",
+    "auth": "supabase"
+  },
+  "facturas": {
+    "nombre": "Control de Facturas · Locales",
+    "url": "https://nwhgtbuaxauwnpzjychu.supabase.co",
+    "anon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im53aGd0YnVheGF1d25wemp5Y2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMzU2NzYsImV4cCI6MjEwODgxMTY3Nn0.3XCfllnbzltMR2IBYYKJAqw1z3tbxAk3iq4mylM4eto",
+    "auth": "supabase"
+  },
+  "recetario": {
+    "nombre": "Recetario Rotisería Román",
+    "url": "https://kedyzgumlllpcohovofb.supabase.co",
+    "anon": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlZHl6Z3VtbGxscGNvaG92b2ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNTIzNjQsImV4cCI6MjEwOTYyODM2NH0.SIFT5dUwA4JXFJUSW_6-H9Uni1EZNaF45W-Vj9VAxmM",
+    "auth": "rpc"
+  }
+}

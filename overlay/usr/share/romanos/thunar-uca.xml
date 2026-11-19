@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>romanos</icon>
+	<name>Preguntar a Claude</name>
+	<unique-id>romanos-claude-1</unique-id>
+	<command>roman-claude-archivo %F</command>
+	<description>Analizar con Claude (facturas PDF, planillas, documentos)</description>
+	<patterns>*</patterns>
+	<other-files/><text-files/><audio-files/><image-files/>
+</action>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Abrir Claude Code aquí</name>
+	<unique-id>romanos-claude-2</unique-id>
+	<command>xfce4-terminal --working-directory=%f -x bash -lc claude</command>
+	<description>Agente Claude en esta carpeta</description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+</actions>

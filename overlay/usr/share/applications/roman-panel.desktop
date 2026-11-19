@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Name=Panel Román
+Comment=Caja, inventario, recetas, facturas y Claude en una sola ventana
+Exec=roman-panel
+Icon=romanos
+Categories=Office;
+StartupWMClass=panel.py
+Actions=caja;claude;
+
+[Desktop Action caja]
+Name=Modo caja (pantalla completa)
+Exec=roman-panel --caja
+
+[Desktop Action claude]
+Name=Preguntar a Claude
+Exec=roman-panel --claude

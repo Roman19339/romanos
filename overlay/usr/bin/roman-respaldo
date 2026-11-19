@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+"""roman-respaldo — copia diaria de todos los datos del negocio a ~/Documentos/Respaldos.
+
+Descarga cada tabla de Inventario y Facturas, y las recetas, en JSON.
+Conserva los últimos 30 respaldos. Lo ejecuta un temporizador cada día a las 23:30.
+"""
+import datetime as dt
+import json
+import shutil
+import sys
+
+sys.path.insert(0, "/usr/lib/romanos/ai")
+import server  # noqa: E402
+
+TABLAS = {
+    "inventario": ["productos", "inventarios", "ingresos", "equivalencias", "ajustes"],
+    "facturas": ["locales", "recib", "emit", "nc", "pers", "remu", "par"],
+}
+
+destino = server.DOCS / "Respaldos" / dt.datetime.now().strftime("%Y-%m-%d_%H%M")
+destino.mkdir(parents=True, exist_ok=True)
+ok, fallas = 0, []
+for svc, tablas in TABLAS.items():
+    try:
+        s = server.Supa(svc)
+        for t in tablas:
+            filas, desde = [], 0
+            while True:  # paginado de 1000 en 1000
+                lote = s.select(t, {"select": "*", "offset": str(desde), "limit": "1000"})
+                filas += lote
+                if len(lote) < 1000:
+                    break
+                desde += 1000
+            (destino / f"{svc}.{t}.json").write_text(json.dumps(filas, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            ok += 1
+    except Exception as e:
+        fallas.append(f"{svc}: {e}")
+try:
+    (destino / "recetario.recetas.json").write_text(json.dumps(server.t_recetas(), ensure_ascii=False, indent=1), encoding="utf-8")
+    ok += 1
+except Exception as e:
+    fallas.append(f"recetario: {e}")
+
+previos = sorted(p for p in (server.DOCS / "Respaldos").iterdir() if p.is_dir())
+for viejo in previos[:-30]:
+    shutil.rmtree(viejo, ignore_errors=True)
+
+print(f"Respaldo en {destino}: {ok} tablas guardadas.")
+for f in fallas:
+    print("  ⚠", f)
+sys.exit(1 if fallas and not ok else 0)

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="b" cx="78%" cy="85%" r="75%"><stop offset="0" stop-color="#5a1f14"/><stop offset=".45" stop-color="#241713"/><stop offset="1" stop-color="#110e0d"/></radialGradient>
+    <radialGradient id="e" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f08a3c" stop-opacity=".55"/><stop offset="1" stop-color="#d9452b" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#b)"/>
+  <circle cx="1500" cy="930" r="520" fill="url(#e)"/>
+  <g stroke="#f3ece6" stroke-opacity=".06" stroke-width="2" fill="none">
+    <path d="M0 760 C 400 700 800 820 1920 720"/><path d="M0 820 C 420 760 820 880 1920 780"/>
+    <path d="M0 880 C 440 820 840 940 1920 840"/><path d="M0 940 C 460 880 860 1000 1920 900"/>
+  </g>
+  <text x="120" y="190" font-family="Inter,DejaVu Sans,sans-serif" font-size="64" font-weight="800" fill="#f3ece6" fill-opacity=".9">RomanOS</text>
+  <text x="122" y="240" font-family="Inter,DejaVu Sans,sans-serif" font-size="26" fill="#b5a79d">Rotisería &amp; Carnicería Román · Calama</text>
+</svg>

@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Instalador RomanOS (si se eligió en el arranque)
+Exec=sh -c 'grep -q romanos-instalar /proc/cmdline && pkexec calamares'
+OnlyShowIn=XFCE;

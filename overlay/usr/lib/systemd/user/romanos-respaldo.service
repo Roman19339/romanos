@@ -1,0 +1,6 @@
+[Unit]
+Description=RomanOS · respaldo de datos del negocio
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/roman-respaldo

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Claude Code (terminal)
+Comment=Agente Claude con acceso a las herramientas del negocio
+Exec=xfce4-terminal --title=Claude -x roman-claude-terminal
+Icon=utilities-terminal
+Categories=Office;Development;

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Primer inicio / ajustes: clave de Claude, cuentas de las apps y Claude Code.
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/romanos"
+mkdir -p "$CFG"
+
+# Espacio de trabajo de Claude Code con el contexto del negocio
+if [ ! -f "$HOME/Negocio/CLAUDE.md" ]; then
+  mkdir -p "$HOME/Negocio"
+  cp -n /usr/share/romanos/negocio/CLAUDE.md "$HOME/Negocio/" 2>/dev/null
+  cp -n /usr/share/romanos/negocio/mcp.json "$HOME/Negocio/.mcp.json" 2>/dev/null
+fi
+
+# Claude Code: si no quedó instalado en la imagen, se instala para este usuario
+if ! command -v claude >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/claude" ]; then
+  ( npm config set prefix "$HOME/.local" >/dev/null 2>&1
+    npm install -g @anthropic-ai/claude-code >/dev/null 2>&1 \
+      && notify-send -i romanos "Claude Code instalado" "Ábrelo desde Panel → Terminal Claude" ) &
+fi
+
+systemctl --user start romanos-ai.service 2>/dev/null
+exec roman-panel --claude

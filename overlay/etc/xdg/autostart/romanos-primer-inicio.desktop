@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=RomanOS primer inicio
+Exec=romanos-primer-inicio
+OnlyShowIn=XFCE;
+NoDisplay=true

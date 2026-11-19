@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Panel Román
+Exec=sh -c 'if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/romanos/config.json" ]; then roman-panel; else roman-setup; fi'
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-Delay=3

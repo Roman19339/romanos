@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Ajustes de Claude
+Comment=Clave de Claude y cuentas de las apps del negocio
+Exec=roman-setup
+Icon=preferences-system
+Categories=Settings;

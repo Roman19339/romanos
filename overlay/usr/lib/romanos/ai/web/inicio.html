@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Inicio · RomanOS</title>
+<link rel="stylesheet" href="/estilo.css">
+<style>
+body{padding:28px 32px;overflow:auto}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.top h1{font-size:1.9em;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:14px 16px}
+.kpi .n{font-size:1.7em;font-weight:700;font-variant-numeric:tabular-nums}
+.kpi .l{color:var(--suave);font-size:.9em}
+.kpi.rojo .n{color:var(--brasa2)} .kpi.verde .n{color:var(--ok)}
+.card h2{font-size:1.05em;display:flex;justify-content:space-between;align-items:center}
+.vacio{color:var(--suave);padding:8px 0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.ask{display:flex;gap:8px;margin:0 0 18px}
+.ask input{flex:1;font-size:1.05em;padding:.8em 1em}
+.err{color:var(--brasa2);font-size:.9em}
+</style></head><body>
+<div class="top"><div><div class="muted" id="fecha"></div><h1 id="saludo">Hola</h1></div>
+  <button class="sec" onclick="cargar()">Actualizar</button></div>
+<form class="ask" id="ask"><input id="q" placeholder="Pregúntale algo a Claude… ej: ¿cuánto compramos de pollo este mes?"><button>Preguntar</button></form>
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+  <div class="card"><h2>Facturas por pagar <span class="chip" id="cv"></span></h2><div id="venc" class="vacio">Cargando…</div></div>
+  <div class="card"><h2>Último inventario <span class="chip" id="ci"></span></h2><div id="inv" class="vacio">Cargando…</div></div>
+  <div class="card"><h2>Equipo</h2><div id="eq" class="vacio">Cargando…</div></div>
+</div>
+<script>
+const T = new URLSearchParams(location.search).get('t') || '';
+const $ = id => document.getElementById(id);
+const clp = n => '$' + Math.round(n||0).toLocaleString('es-CL');
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const h = new Date().getHours();
+$('saludo').textContent = h<12 ? 'Buenos días' : h<20 ? 'Buenas tardes' : 'Buenas noches';
+$('fecha').textContent = new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+$('ask').onsubmit = e => { e.preventDefault(); const v=$('q').value.trim(); if(!v) return;
+  // El Panel intercepta este esquema y lo manda a la barra de Claude
+  location.href = 'roman://preguntar?q=' + encodeURIComponent(v); };
+
+function falla(el, e){ el.className='err'; el.innerHTML = esc(e) + (/roman-setup|Falta/.test(e)?' <a href="/ajustes?t='+T+'">Configurar</a>':''); }
+
+async function cargar(){
+  let d;
+  try { d = await (await fetch('/api/resumen',{headers:{'X-Roman-Token':T}})).json(); }
+  catch(e){ $('venc').textContent='Servicio Claude no disponible'; return; }
+  const k = [];
+  const v = d.vencimientos||{};
+  if (v.error) falla($('venc'), v.error); else {
+    k.push(`<div class="kpi rojo"><div class="n">${clp(v.monto_vencido)}</div><div class="l">vencido (${v.vencidas.length} facturas)</div></div>`);
+    k.push(`<div class="kpi"><div class="n">${clp(v.monto_por_vencer)}</div><div class="l">vence en 7 días (${v.por_vencer.length})</div></div>`);
+    const filas = [...v.vencidas.map(f=>({...f,_v:1})), ...v.por_vencer];
+    $('cv').textContent = filas.length;
+    $('venc').className=''; $('venc').innerHTML = filas.length ? '<table><tr><th>Proveedor</th><th>Local</th><th>Vence</th><th class="num">Neto</th></tr>' +
+      filas.slice(0,12).map(f=>`<tr><td>${esc(f.prov)} <span class="muted">#${esc(f.folio)}</span></td><td>${esc(f.local)}</td><td style="color:${f._v?'var(--brasa2)':'inherit'}">${esc(f.venc)}</td><td class="num">${clp(f.neto_items)}</td></tr>`).join('') + '</table>'
+      : '<div class="vacio">Todo al día ✅</div>';
+  }
+  const inv = d.inventario;
+  if (inv && inv.error) falla($('inv'), inv.error);
+  else if (inv && inv[0]) {
+    const r = inv[0], items = Object.entries(r.items||{}).map(([n,q])=>[n, typeof q==='object'? (q.q??q.cant??q.qty??JSON.stringify(q)) : q]);
+    const bajos = items.filter(([,q])=>Number(q)<=0);
+    $('ci').textContent = r.fecha;
+    k.push(`<div class="kpi ${bajos.length?'rojo':'verde'}"><div class="n">${bajos.length}</div><div class="l">productos en cero</div></div>`);
+    $('inv').className=''; $('inv').innerHTML = `<div class="muted">${items.length} productos contados por ${esc(r.usuario_email||'—')}</div>` +
+      (bajos.length? '<p><b>Sin stock:</b> '+bajos.slice(0,25).map(b=>esc(b[0])).join(', ')+'</p>' : '<p>Ningún producto en cero.</p>');
+  } else $('inv').textContent = 'Sin registros';
+  const eq = d.equipo||{};
+  if (eq.error) falla($('eq'), eq.error); else {
+    $('eq').className=''; $('eq').innerHTML = `<table>
+      <tr><td>Disco</td><td>${esc(eq.disco)}</td></tr><tr><td>Memoria</td><td>${esc(eq.memoria)}</td></tr>
+      <tr><td>Red</td><td>${esc(eq.red)}</td></tr><tr><td>Impresoras</td><td style="white-space:pre-line">${esc(eq.impresoras)}</td></tr>
+      <tr><td>Respaldos</td><td>${esc((eq.ultimos_respaldos||[])[0]||'nunca')}</td></tr>
+      <tr><td>Actualizaciones</td><td>${esc(eq.actualizaciones_pendientes)} pendientes</td></tr></table>`;
+  }
+  $('kpis').innerHTML = k.join('');
+}
+cargar(); setInterval(cargar, 10*60*1000);
+</script></body></html>

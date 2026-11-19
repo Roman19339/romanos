@@ -1,0 +1,43 @@
+# GitHub Actions: construye la ISO de RomanOS en la nube, sin instalar nada en tu PC.
+# Va en el repositorio como:  .github/workflows/construir-iso.yml
+# Luego: pestaña "Actions" → "Construir ISO RomanOS" → "Run workflow".
+name: Construir ISO RomanOS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['build/**', 'overlay/**', '.github/workflows/**']
+
+jobs:
+  iso:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Descargar el kit
+        uses: actions/checkout@v4
+
+      - name: Liberar espacio en el servidor
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          sudo docker image prune -af || true
+          df -h / /mnt
+
+      - name: Instalar herramientas de construcción
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin grub-common mtools dosfstools
+
+      - name: Construir la ISO (20-40 min)
+        run: |
+          sudo mkdir -p /mnt/romanos && sudo chown "$USER" /mnt/romanos
+          sudo WORK=/mnt/romanos/work OUT=/mnt/romanos/out bash ./build/build-iso.sh
+          ls -lh /mnt/romanos/out
+
+      - name: Publicar la ISO para descargar
+        uses: actions/upload-artifact@v4
+        with:
+          name: RomanOS-ISO
+          path: /mnt/romanos/out/
+          compression-level: 0
+          retention-days: 7

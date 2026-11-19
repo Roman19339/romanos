@@ -1,0 +1,23 @@
+#!/bin/bash
+# Abre Claude Code (agente oficial de Anthropic) en ~/Negocio, con las
+# herramientas de RomanOS conectadas por MCP. Si no está disponible, usa 'roman'.
+export PATH="$HOME/.local/bin:$PATH"
+mkdir -p "$HOME/Negocio"
+cp -n /usr/share/romanos/negocio/CLAUDE.md "$HOME/Negocio/" 2>/dev/null
+  cp -n /usr/share/romanos/negocio/mcp.json "$HOME/Negocio/.mcp.json" 2>/dev/null
+cd "$HOME/Negocio" || exit 1
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/romanos/config.json"
+if [ -z "$ANTHROPIC_API_KEY" ] && [ -f "$CFG" ]; then
+  ANTHROPIC_API_KEY="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("anthropic_api_key",""))' "$CFG")"
+  [ -n "$ANTHROPIC_API_KEY" ] && export ANTHROPIC_API_KEY
+fi
+if command -v claude >/dev/null 2>&1; then
+  echo "Claude Code · espacio ~/Negocio · herramientas RomanOS conectadas"
+  echo "(Si tienes plan Pro/Max puedes iniciar sesión con /login en vez de usar la clave de API)"
+  echo
+  exec claude
+fi
+echo "Claude Code no está instalado todavía (requiere internet: ejecuta roman-setup)."
+echo "Usando el asistente integrado:"
+echo
+exec roman

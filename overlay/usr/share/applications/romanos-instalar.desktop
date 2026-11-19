@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Instalar RomanOS
+Comment=Instalar RomanOS en este computador
+Exec=pkexec calamares
+Icon=romanos
+Categories=System;

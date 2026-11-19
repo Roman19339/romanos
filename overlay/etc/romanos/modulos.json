@@ -1,0 +1,14 @@
+{
+  "_nota": "Módulos del Panel Román. Edita esta lista para agregar o quitar apps. 'url' puede ser un sitio web, un artefacto de Claude o un archivo local (file://).",
+  "modulos": [
+    {"id": "inicio",      "nombre": "Inicio",        "icono": "🏠", "url": "local:inicio"},
+    {"id": "pos",         "nombre": "Caja (POS)",    "icono": "🥩", "url": "https://claude.ai/artifact/LkwdqMR9MPuAR7qCW233Nv", "desc": "POS Carnicería · Rotisería · Minimarket"},
+    {"id": "inventario",  "nombre": "Inventario",    "icono": "📦", "url": "https://inventario-calama.netlify.app", "desc": "Inventario semanal, alertas de stock y pedido sugerido"},
+    {"id": "recetario",   "nombre": "Recetario",     "icono": "🍗", "url": "https://recetario-roman.netlify.app", "desc": "Recetas escaladas por kg de carne y costos"},
+    {"id": "facturas",    "nombre": "Facturas",      "icono": "🧾", "url": "https://facturas-roman.netlify.app", "desc": "Facturas recibidas/emitidas, NC, personal y remuneraciones"},
+    {"id": "liquidacion", "nombre": "Liquidación",   "icono": "💵", "url": "https://claude.ai/artifact/M1zrvwNoufRSTkRDfHJhGV", "desc": "Liquidación Roti Calama"},
+    {"id": "dj",          "nombre": "Música local",  "icono": "🎧", "url": "https://claude.ai/artifact/Wiu8UfXB7BBF6z1cnEcPg6", "desc": "DJ Auto · mezcla y anuncios para el local"},
+    {"id": "djlocal",     "nombre": "DJ Local",      "icono": "🎚️", "url": "https://claude.ai/artifact/E4t8N5dfioUYa88LyTm5Xo"},
+    {"id": "mp3",         "nombre": "Convertir MP3", "icono": "🎵", "url": "https://claude.ai/artifact/XX5hTvVnzV98VTWi7hCPjW"}
+  ]
+}

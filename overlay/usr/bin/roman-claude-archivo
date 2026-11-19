@@ -1,0 +1,8 @@
+#!/bin/sh
+# Acción "Preguntar a Claude" del menú contextual de Archivos (Thunar).
+# Uso: roman-claude-archivo <archivo> [<archivo>…]
+[ $# -eq 0 ] && exit 0
+LISTA=""
+for f in "$@"; do LISTA="$LISTA
+- $f"; done
+exec roman-panel --preguntar "Revisa estos archivos con la herramienta leer_archivo y dime qué contienen y qué debería hacer con ellos (si es una factura: proveedor, folio, fechas, total y si ya está registrada):$LISTA"

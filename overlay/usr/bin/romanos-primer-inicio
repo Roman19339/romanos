@@ -1,0 +1,20 @@
+#!/bin/sh
+# Ajustes por usuario que XFCE no permite fijar de forma global (una sola vez por usuario).
+MARCA="${XDG_CONFIG_HOME:-$HOME/.config}/romanos/.primer-inicio"
+[ -f "$MARCA" ] && exit 0
+sleep 2
+WALL=/usr/share/romanos/branding/wallpaper.png
+for p in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep -E 'last-image$'); do
+  xfconf-query -c xfce4-desktop -p "$p" -s "$WALL"
+done
+for m in monitor0 monitorVirtual1 monitorVirtual-1 monitoreDP-1 monitorHDMI-1 monitorHDMI-A-1; do
+  xfconf-query -c xfce4-desktop -p "/backdrop/screen0/$m/workspace0/last-image" -n -t string -s "$WALL" 2>/dev/null
+  xfconf-query -c xfce4-desktop -p "/backdrop/screen0/$m/workspace0/image-style" -n -t int -s 5 2>/dev/null
+done
+xfconf-query -c xfce4-desktop -p /desktop-icons/style -n -t int -s 2
+# Atajos: Super+Espacio = Claude · Super = menú · Ctrl+Alt+C = modo caja · Super+T = Claude Code
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>space" -n -t string -s "roman-panel --claude"
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/Super_L" -n -t string -s "xfce4-popup-whiskermenu"
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Primary><Alt>c" -n -t string -s "roman-panel --caja"
+xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Super>t" -n -t string -s "xfce4-terminal -x roman-claude-terminal"
+mkdir -p "$(dirname "$MARCA")" && touch "$MARCA"

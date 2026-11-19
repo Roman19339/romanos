@@ -1,0 +1,27 @@
+---
+componentName: romanos
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 960px,640px
+strings:
+  productName: RomanOS
+  shortProductName: RomanOS
+  version: 1.0
+  shortVersion: 1.0
+  versionedName: RomanOS 1.0
+  shortVersionedName: RomanOS 1.0
+  bootloaderEntryName: RomanOS
+  productUrl: https://rotiseria-roman.local
+  supportUrl: https://rotiseria-roman.local/soporte
+images:
+  productLogo: "logo.png"
+  productIcon: "logo.png"
+  productWelcome: "welcome.png"
+slideshow: "show.qml"
+slideshowAPI: 2
+style:
+  SidebarBackground: "#141110"
+  SidebarText: "#f3ece6"
+  SidebarTextCurrent: "#ffffff"
+  SidebarBackgroundCurrent: "#d9452b"

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Claude · RomanOS</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/estilo.css">
+<style>
+body{display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--borde)}
+header .logo{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--brasa),var(--brasa2));display:grid;place-items:center;font-weight:800}
+header b{flex:1}
+#log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.m{max-width:100%;line-height:1.5}
+.m.u{align-self:flex-end;background:var(--panel2);border:1px solid var(--borde);padding:8px 12px;border-radius:12px 12px 2px 12px;max-width:88%;white-space:pre-wrap}
+.m.a p{margin:.35em 0}
+.m.a table{margin:.5em 0}
+.tools{font-size:.8em;color:var(--suave)}
+.tools span{margin-right:6px}
+.err{color:var(--brasa2)}
+.sug{display:flex;flex-wrap:wrap;gap:6px}
+.sug button{background:var(--panel2);border:1px solid var(--borde);color:var(--texto);font-weight:500;font-size:.9em;padding:.45em .7em}
+form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--borde)}
+textarea{resize:none;height:44px;max-height:160px}
+.pensando::after{content:"…";animation:p 1s infinite}
+@keyframes p{50%{opacity:.2}}
+</style></head>
+<body>
+<header><div class="logo">R</div><b>Claude</b>
+  <button class="sec" id="nuevo" title="Nueva conversación">Nueva</button>
+  <button class="sec" onclick="location.href='/ajustes'+location.search" title="Ajustes">⚙</button></header>
+<div id="log">
+  <div class="m a"><p>Hola 👋 Soy Claude, integrado en RomanOS. Puedo revisar el inventario, las facturas, las recetas y el estado del equipo.</p></div>
+  <div class="sug" id="sug">
+    <button>¿Qué facturas vencen esta semana?</button>
+    <button>¿Qué productos están bajos según el último inventario?</button>
+    <button>Escala la receta de pollo asado a 12 kg</button>
+    <button>¿Cuánto le compramos a cada proveedor este mes?</button>
+    <button>¿Está todo bien con el computador e impresoras?</button>
+  </div>
+</div>
+<form id="f"><textarea id="q" placeholder="Pregúntale a Claude sobre el negocio…  (Enter envía, Shift+Enter nueva línea)" autofocus></textarea><button id="env">Enviar</button></form>
+<script>
+const T = new URLSearchParams(location.search).get('t') || sessionStorage.getItem('t') || '';
+if (T) sessionStorage.setItem('t', T);
+const log = document.getElementById('log'), q = document.getElementById('q'), env = document.getElementById('env');
+let messages = [];
+try { messages = JSON.parse(sessionStorage.getItem('conv') || '[]'); } catch(e) {}
+const NOMBRES = {inventario_productos:'📦 productos', inventario_registros:'📋 inventario', inventario_compras:'🚚 compras',
+  inventario_ajustes:'⚙ ajustes', facturas:'🧾 facturas', facturas_por_vencer:'⏰ vencimientos', personal:'👥 personal',
+  recetas:'🍗 recetas', estado_equipo:'🖥 equipo', imprimir:'🖨 impresión', guardar_reporte:'💾 reporte',
+  leer_archivo:'📄 archivo', abrir_modulo:'↗ panel', respaldar_ahora:'🗄 respaldo'};
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function md(s){ // markdown mínimo y seguro
+  s = esc(s);
+  s = s.replace(/```([\s\S]*?)```/g,(_,c)=>'<pre>'+c+'</pre>');
+  const lines = s.split('\n'); let out=[], tbl=null, ul=false;
+  const flush=()=>{ if(tbl){ out.push('<table>'+tbl.map((r,i)=>'<tr>'+r.map(c=>i?`<td>${c}</td>`:`<th>${c}</th>`).join('')+'</tr>').join('')+'</table>'); tbl=null; } if(ul){out.push('</ul>');ul=false;} };
+  for (const l of lines){
+    if (/^\s*\|.*\|\s*$/.test(l)){ if(/^\s*\|[\s:\-|]+\|\s*$/.test(l)) continue; (tbl=tbl||[]).push(l.trim().slice(1,-1).split('|').map(c=>c.trim())); continue; }
+    if (/^\s*[-*] /.test(l)){ if(tbl)flush(); if(!ul){out.push('<ul>');ul=true;} out.push('<li>'+l.replace(/^\s*[-*] /,'')+'</li>'); continue; }
+    flush();
+    const h = l.match(/^(#{1,3}) (.*)/);
+    out.push(h ? `<h3>${h[2]}</h3>` : (l.trim()? '<p>'+l+'</p>' : ''));
+  }
+  flush();
+  return out.join('').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');
+}
+function add(cls, html){ const d=document.createElement('div'); d.className='m '+cls; d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; return d; }
+function textOf(m){ return typeof m.content==='string'? m.content : (m.content||[]).filter(b=>b.type==='text').map(b=>b.text).join(''); }
+function render(){ for (const m of messages){ const t=textOf(m); if(!t) continue; m.role==='user'? add('u',esc(t)) : add('a',md(t)); } }
+if (messages.length){ document.getElementById('sug').remove(); render(); }
+
+async function enviar(texto){
+  texto = texto.trim(); if(!texto) return;
+  document.getElementById('sug')?.remove();
+  add('u', esc(texto)); q.value=''; env.disabled=true;
+  messages.push({role:'user', content:texto});
+  const p = add('a pensando','<span class="muted">Pensando</span>');
+  try{
+    const r = await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','X-Roman-Token':T},body:JSON.stringify({messages})});
+    const j = await r.json(); p.classList.remove('pensando');
+    if (j.error){ p.innerHTML='<span class="err">'+esc(j.error)+'</span>'; messages.pop(); }
+    else {
+      const tools = (j.herramientas||[]).map(t=>`<span>${NOMBRES[t.herramienta]||t.herramienta}${t.error?' ⚠':''}</span>`).join('');
+      p.innerHTML = (tools?`<div class="tools">${tools}</div>`:'') + md(j.respuesta||'(sin respuesta)');
+      // Se guarda solo el texto para mantener la conversación liviana
+      messages.push({role:'assistant', content:j.respuesta||''});
+      sessionStorage.setItem('conv', JSON.stringify(messages.slice(-30)));
+    }
+  }catch(e){ p.classList.remove('pensando'); p.innerHTML='<span class="err">No pude hablar con el servicio local de Claude ('+esc(String(e))+'). Prueba: systemctl --user restart romanos-ai</span>'; messages.pop(); }
+  env.disabled=false; q.focus(); log.scrollTop=log.scrollHeight;
+}
+document.getElementById('f').onsubmit=e=>{e.preventDefault(); enviar(q.value)};
+q.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault(); enviar(q.value);} });
+document.getElementById('sug')?.addEventListener('click',e=>{ if(e.target.tagName==='BUTTON') enviar(e.target.textContent) });
+document.getElementById('nuevo').onclick=()=>{ sessionStorage.removeItem('conv'); location.reload(); };
+// Permite que el Panel o el atajo de teclado envíen una pregunta: /chat?t=..&q=...
+const pre = new URLSearchParams(location.search).get('q');
+if (pre) { history.replaceState(null,'','/chat?t='+encodeURIComponent(T)); enviar(pre); }
+</script>
+</body></html>

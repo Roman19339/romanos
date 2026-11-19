@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>Ajustes · RomanOS</title>
+<link rel="stylesheet" href="/estilo.css">
+<style>
+body{padding:22px;max-width:720px;margin:auto;overflow:auto}
+.card{margin-bottom:14px}
+label{display:block;margin:.7em 0 .3em;color:var(--suave);font-size:.9em}
+.fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acciones{display:flex;gap:8px;align-items:center;margin-top:12px}
+#msg{margin-left:6px}
+</style></head><body>
+<h1>Ajustes de Claude</h1>
+<p class="muted">Se guardan solo en este equipo, en <code>~/.config/romanos/config.json</code> (permisos 600).</p>
+<div class="card">
+  <h3>Claude</h3>
+  <label>Clave de API de Anthropic <span id="kst"></span></label>
+  <input id="key" type="password" placeholder="sk-ant-…  (créala en console.anthropic.com)">
+  <label>Modelo</label>
+  <select id="modelo">
+    <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — recomendado (rápido y económico)</option>
+    <option value="claude-opus-5-5">Claude Opus 5.5 — análisis más profundos</option>
+    <option value="claude-haiku-5-5">Claude Haiku 5.5 — el más económico</option>
+  </select>
+</div>
+<div class="card"><h3>Cuentas de tus apps</h3>
+  <p class="muted">Usa el mismo usuario y clave con que entras a cada app. Claude solo ve lo que esa cuenta puede ver.</p>
+  <div id="cuentas"></div>
+</div>
+<div class="acciones"><button id="guardar">Guardar</button><button class="sec" id="probar">Probar conexiones</button>
+  <button class="sec" onclick="history.back()">Volver</button><span id="msg" class="muted"></span></div>
+<script>
+const T = new URLSearchParams(location.search).get('t') || sessionStorage.getItem('t') || '';
+const H = {'Content-Type':'application/json','X-Roman-Token':T};
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AYUDA = {inventario:'correo de la app Inventario', facturas:'correo de Control de Facturas', recetario:'usuario del Recetario'};
+let estado;
+(async()=>{
+  estado = await (await fetch('/api/ajustes',{headers:H})).json();
+  $('kst').innerHTML = estado.tiene_api_key ? '<span class="chip ok">guardada</span>' : '<span class="chip mal">falta</span>';
+  $('modelo').value = estado.modelo;
+  $('cuentas').innerHTML = Object.entries(estado.servicios).map(([k,n])=>`
+    <label><b style="color:var(--texto)">${esc(n)}</b> <span id="st-${k}"></span></label>
+    <div class="fila"><input id="u-${k}" placeholder="${AYUDA[k]||'usuario'}" value="${esc((estado.cuentas[k]||{}).usuario)}">
+    <input id="c-${k}" type="password" placeholder="${(estado.cuentas[k]||{}).tiene_clave?'•••••• (guardada)':'clave'}"></div>`).join('');
+})();
+$('guardar').onclick = async()=>{
+  const cuentas = {}; for (const k in estado.servicios) cuentas[k] = {usuario:$('u-'+k).value, clave:$('c-'+k).value};
+  const r = await fetch('/api/ajustes',{method:'POST',headers:H,body:JSON.stringify({anthropic_api_key:$('key').value, modelo:$('modelo').value, cuentas})});
+  $('msg').textContent = r.ok ? 'Guardado ✓' : 'Error al guardar';
+  if (r.ok) $('probar').click();
+};
+$('probar').onclick = async()=>{
+  $('msg').textContent='Probando…';
+  const r = await (await fetch('/api/probar',{method:'POST',headers:H,body:'{}'})).json();
+  for (const [k,v] of Object.entries(r)) { const el=$('st-'+k); if (el) el.innerHTML = v==='ok' ? '<span class="chip ok">conectado</span>' : `<span class="chip mal" title="${esc(v)}">${esc(v.slice(0,60))}</span>`; }
+  $('msg').textContent='';
+};
+</script></body></html>
