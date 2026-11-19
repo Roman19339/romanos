@@ -68,7 +68,6 @@ cups
 cups-bsd
 printer-driver-escpr
 system-config-printer
-python3-escpos
 python3-usb
 libreoffice-calc
 libreoffice-writer

@@ -117,7 +117,7 @@ log "5/7 Generando filesystem.squashfs (tarda varios minutos)"
 cp "$CHROOT"/boot/vmlinuz-*  "$IMAGE/casper/vmlinuz"
 cp "$CHROOT"/boot/initrd.img-* "$IMAGE/casper/initrd"
 rm -f "$IMAGE/casper/filesystem.squashfs"
-mksquashfs "$CHROOT" "$IMAGE/casper/filesystem.squashfs" -comp zstd -Xcompression-level 15 -e boot -noappend
+mksquashfs "$CHROOT" "$IMAGE/casper/filesystem.squashfs" -comp zstd -Xcompression-level 15 -noappend
 du -sx --block-size=1 "$CHROOT" | cut -f1 > "$IMAGE/casper/filesystem.size"
 chroot "$CHROOT" dpkg-query -W --showformat='${Package} ${Version}\n' > "$IMAGE/casper/filesystem.manifest" 2>/dev/null || true
 

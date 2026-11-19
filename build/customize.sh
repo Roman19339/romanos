@@ -5,7 +5,8 @@ VERSION="$1"; CODENAME="$2"
 export DEBIAN_FRONTEND=noninteractive
 
 echo ">> Identidad del sistema"
-cat > /etc/os-release <<EOF
+rm -f /etc/os-release
+cat > /usr/lib/os-release <<EOF
 PRETTY_NAME="RomanOS $VERSION ($CODENAME)"
 NAME="RomanOS"
 VERSION_ID="$VERSION"
@@ -18,7 +19,7 @@ SUPPORT_URL="https://rotiseria-roman.local/soporte"
 UBUNTU_CODENAME=noble
 LOGO=romanos
 EOF
-cp /etc/os-release /usr/lib/os-release
+ln -sf ../usr/lib/os-release /etc/os-release
 cat > /etc/lsb-release <<EOF
 DISTRIB_ID=RomanOS
 DISTRIB_RELEASE=$VERSION

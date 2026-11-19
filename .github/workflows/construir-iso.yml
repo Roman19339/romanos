@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 120
     steps:
       - name: Descargar el kit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Liberar espacio en el servidor
         run: |
