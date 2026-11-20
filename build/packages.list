@@ -1,6 +1,7 @@
 # ---------------- Núcleo y arranque en vivo ----------------
 linux-generic
 casper
+user-setup
 discover
 laptop-detect
 os-prober

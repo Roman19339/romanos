@@ -105,6 +105,14 @@ chroot "$CHROOT" /bin/bash /tmp/customize.sh "$VERSION" "$CODENAME"
 # ---------------------------------------------------------------------------
 # 4. Limpieza
 # ---------------------------------------------------------------------------
+log "Verificando la imagen"
+chroot "$CHROOT" dpkg -s casper user-setup lightdm xfce4 calamares >/dev/null || die "Faltan paquetes esenciales"
+[ -e "$CHROOT/etc/systemd/system/multi-user.target.wants/romanos-live-autologin.service" ] || die "No quedó activo el inicio automático de la sesión en vivo"
+[ -x "$CHROOT/usr/lib/romanos/live-autologin.sh" ] || die "Falta live-autologin.sh"
+[ -e "$CHROOT/etc/systemd/user/default.target.wants/romanos-ai.service" ] || die "No quedó activo el servicio romanos-ai"
+ls "$CHROOT"/boot/vmlinuz-* >/dev/null || die "No hay kernel en /boot"
+echo "OK: paquetes esenciales, servicios y kernel presentes"
+
 log "4/7 Limpiando chroot"
 chroot "$CHROOT" /bin/bash -c 'apt-get clean; rm -rf /tmp/* /var/lib/apt/lists/* /var/log/*.log; truncate -s0 /etc/machine-id'
 rm -f "$CHROOT/etc/resolv.conf"
