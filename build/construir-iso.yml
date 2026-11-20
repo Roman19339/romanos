@@ -43,7 +43,7 @@ jobs:
           retention-days: 7
 
       - name: Probar arranque en máquina virtual (QEMU)
-        timeout-minutes: 25
+        timeout-minutes: 35
         continue-on-error: true
         run: |
           sudo apt-get install -y qemu-system-x86 qemu-utils
@@ -52,8 +52,9 @@ jobs:
           xorriso -osirrox on -indev "$ISO" -extract /casper/vmlinuz vmlinuz -extract /casper/initrd initrd
           sudo chmod a+r vmlinuz initrd
           KVM=""; [ -e /dev/kvm ] && sudo chmod 666 /dev/kvm && KVM="-enable-kvm -cpu host"
-          timeout 1200 qemu-system-x86_64 $KVM -m 4096 -smp 2 -cdrom "$ISO" -kernel vmlinuz -initrd initrd \
-            -append "boot=casper console=tty0 console=ttyS0,115200 romanos-diag locale=es_CL.UTF-8 ---" \
+          echo "KVM: ${KVM:-no (emulación lenta)}"
+          timeout 1500 qemu-system-x86_64 $KVM -m 4096 -smp 2 -cdrom "$ISO" -kernel vmlinuz -initrd initrd \
+            -append "boot=casper console=tty0 console=ttyS0,115200 romanos-diag noprompt locale=es_CL.UTF-8 ---" \
             -vga std -display none -serial file:serial.log -no-reboot || true
           echo "################ DIAGNÓSTICO ################"
           sed -n '/=====ROMANOS-DIAG-INICIO=====/,/=====ROMANOS-DIAG-FIN=====/p' serial.log || true
