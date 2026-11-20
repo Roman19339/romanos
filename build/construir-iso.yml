@@ -55,7 +55,7 @@ jobs:
           echo "KVM: ${KVM:-no (emulación lenta)}"
           timeout 1500 qemu-system-x86_64 $KVM -m 4096 -smp 2 -cdrom "$ISO" -kernel vmlinuz -initrd initrd \
             -append "boot=casper console=tty0 console=ttyS0,115200 romanos-diag noprompt locale=es_CL.UTF-8 ---" \
-            -vga std -display none -serial file:serial.log -no-reboot || true
+            -nic user,model=e1000 -vga std -display none -serial file:serial.log -no-reboot || true
           echo "################ DIAGNÓSTICO ################"
           sed -n '/=====ROMANOS-DIAG-INICIO=====/,/=====ROMANOS-DIAG-FIN=====/p' serial.log || true
-          grep -q "RESULTADO: ESCRITORIO_OK" serial.log || { echo "--- últimas líneas de la consola"; tail -n 80 serial.log; exit 1; }
+          grep -q "RESULTADO: ESCRITORIO_OK" serial.log && grep -q "RESULTADO: RED_OK" serial.log || { echo "--- últimas líneas de la consola"; tail -n 80 serial.log; exit 1; }

@@ -107,6 +107,25 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="1fc9", MODE="0664", GROUP="caja"
 EOF
 sed -i 's/^#\?EXTRA_GROUPS=.*/EXTRA_GROUPS="caja lpadmin audio video plugdev netdev"/; s/^#\?ADD_EXTRA_GROUPS=.*/ADD_EXTRA_GROUPS=1/' /etc/adduser.conf
 
+echo ">> Red: NetworkManager administra cable, wifi y móvil"
+mkdir -p /etc/NetworkManager/conf.d /etc/netplan
+# Ubuntu deja las conexiones por cable sin administrar si no hay netplan; esto las activa
+touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
+cat > /etc/NetworkManager/conf.d/20-romanos.conf <<'EOF'
+[main]
+dns=systemd-resolved
+
+[ifupdown]
+managed=true
+EOF
+cat > /etc/netplan/01-network-manager-all.yaml <<'EOF'
+network:
+  version: 2
+  renderer: NetworkManager
+EOF
+chmod 600 /etc/netplan/01-network-manager-all.yaml
+systemctl enable systemd-resolved NetworkManager 2>/dev/null || true
+
 echo ">> Actualizaciones de seguridad automáticas"
 cat > /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
 APT::Periodic::Update-Package-Lists "1";
