@@ -14,6 +14,7 @@ echo "--- conf lightdm"; cat /etc/lightdm/lightdm.conf.d/*.conf 2>&1
 echo "--- servicios fallidos"; systemctl --failed --no-pager 2>&1
 echo "--- live-autologin"; journalctl -b -u romanos-live-autologin --no-pager 2>&1 | tail -n 15
 echo "--- red"; nmcli -t dev 2>&1; ls -l /etc/resolv.conf; cat /etc/resolv.conf 2>&1 | grep -v '^#'
+echo "--- navegador"; brave-browser --version 2>&1 | head -1; ls -l /etc/alternatives/x-www-browser; xdg-mime query default x-scheme-handler/https 2>&1
 echo "--- DNS claude.ai"; getent hosts claude.ai 2>&1 || echo "SIN DNS"
 if ps -eo comm | grep -q '^xfce4-session$'; then echo "RESULTADO: ESCRITORIO_OK"; else echo "RESULTADO: ESCRITORIO_FALLA"; fi
 if getent hosts claude.ai >/dev/null 2>&1; then echo "RESULTADO: RED_OK"; else echo "RESULTADO: RED_FALLA"; fi

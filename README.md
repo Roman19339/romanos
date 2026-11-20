@@ -1,4 +1,4 @@
-# RomanOS 1.0 "parrilla"
+# RomanOS 1.1 "parrilla"
 
 Sistema operativo para la **Rotisería & Carnicería Román**, construido sobre la base
 de Ubuntu 24.04 LTS, con escritorio, identidad, instalador y herramientas propias, y
@@ -27,6 +27,7 @@ de Ubuntu 24.04 LTS, con escritorio, identidad, instalador y herramientas propia
 | Idioma / zona | Inglés / UTC | Español de Chile, `America/Santiago`, teclado latinoamericano |
 | Instalador | Subiquity | Calamares con marca RomanOS, crea usuarios en el grupo `caja` |
 | Negocio | — | Tus apps integradas, impresoras térmicas ESC/POS listas, respaldo diario 23:30 |
+| Navegador | Firefox (snap) | **Brave** con **Brave Search** como buscador predeterminado |
 | IA | — | **Claude nativo** (ver abajo) |
 
 ## Claude integrado
@@ -67,8 +68,9 @@ acciones son imprimir, guardar reportes en `~/Documentos/Reportes` y respaldar.
 | Convertir MP3 | Artefacto *Convertidor a MP3* |
 
 La lista está en `/etc/romanos/modulos.json`: agregar una app es agregar una línea.
-Los artefactos de claude.ai piden iniciar sesión en Claude la primera vez; el Panel
-recuerda la sesión.
+Los módulos marcados con ↗ (artefactos de claude.ai) se abren en una ventana de Brave,
+porque claude.ai no funciona en el motor WebKit del Panel (`"motor": "brave"`). Piden
+iniciar sesión en Claude la primera vez y Brave recuerda la sesión.
 
 ---
 
@@ -99,7 +101,7 @@ docker build -t romanos-builder -f build/Dockerfile .
 docker run --rm --privileged -v "${PWD}:/romanos" romanos-builder
 ```
 
-Resultado: `RomanOS-1.0-amd64.iso` (+ `.sha256`). Si algún paquete no existe en
+Resultado: `RomanOS-1.1-amd64.iso` (+ `.sha256`). Si algún paquete no existe en
 los repositorios, el script lo informa como “omitido” y continúa.
 
 ## 2. Probar

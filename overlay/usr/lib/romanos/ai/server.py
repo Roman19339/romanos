@@ -396,7 +396,7 @@ TOOLS = {
     "guardar_reporte": (t_guardar_reporte, "Guarda un reporte en ~/Documentos/Reportes (md, csv, txt o html).",
         _obj({"nombre": S, "contenido": S, "formato": S}, ["nombre", "contenido"])),
     "leer_archivo": (t_leer_archivo, "Lee un archivo del usuario (PDF de factura, planilla Excel/CSV, documento) para analizarlo.", _obj({"ruta": S}, ["ruta"])),
-    "abrir_modulo": (t_abrir_modulo, "Abre un módulo en el Panel Román: inicio, pos, inventario, recetario, facturas, liquidacion, dj, djlocal, mp3.", _obj({"modulo": S}, ["modulo"])),
+    "abrir_modulo": (t_abrir_modulo, "Abre un módulo en el Panel Román: inicio, pos, inventario, recetario, facturas, liquidacion, dj, djlocal, mp3, internet.", _obj({"modulo": S}, ["modulo"])),
     "respaldar_ahora": (t_respaldar_ahora, "Descarga ahora un respaldo de todos los datos del negocio a ~/Documentos/Respaldos.", _obj({})),
 }
 

@@ -7,10 +7,10 @@ windowSize: 960px,640px
 strings:
   productName: RomanOS
   shortProductName: RomanOS
-  version: 1.0
-  shortVersion: 1.0
-  versionedName: RomanOS 1.0
-  shortVersionedName: RomanOS 1.0
+  version: 1.1
+  shortVersion: 1.1
+  versionedName: RomanOS 1.1
+  shortVersionedName: RomanOS 1.1
   bootloaderEntryName: RomanOS
   productUrl: https://rotiseria-roman.local
   supportUrl: https://rotiseria-roman.local/soporte

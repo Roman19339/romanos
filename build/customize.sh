@@ -82,6 +82,38 @@ if [ -d /usr/share/plymouth/themes/spinner ]; then
   update-alternatives --set default.plymouth /usr/share/plymouth/themes/spinner/spinner.plymouth 2>/dev/null || true
 fi
 
+echo ">> Navegador Brave (predeterminado, buscador Brave Search)"
+curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
+  > /etc/apt/sources.list.d/brave-browser-release.list
+apt-get update
+apt-get install -y --no-install-recommends brave-browser
+BRAVE_BIN="$(command -v brave-browser-stable || command -v brave-browser)"
+update-alternatives --install /usr/bin/x-www-browser x-www-browser "$BRAVE_BIN" 300
+update-alternatives --set x-www-browser "$BRAVE_BIN"
+update-alternatives --install /usr/bin/gnome-www-browser gnome-www-browser "$BRAVE_BIN" 300 || true
+# Sin pantalla de bienvenida en cada usuario nuevo
+mkdir -p "/etc/skel/.config/BraveSoftware/Brave-Browser"
+touch "/etc/skel/.config/BraveSoftware/Brave-Browser/First Run"
+# XFCE: navegador web preferido
+mkdir -p /etc/xdg/xfce4
+cat > /etc/xdg/xfce4/helpers.rc <<'EOF'
+WebBrowser=brave-browser
+EOF
+mkdir -p /usr/share/xfce4/helpers
+cat > /usr/share/xfce4/helpers/brave-browser.desktop <<'EOF'
+[Desktop Entry]
+NoDisplay=true
+Version=1.0
+Encoding=UTF-8
+Type=X-XFCE-Helper
+X-XFCE-Category=WebBrowser
+X-XFCE-CommandsWithParameter=brave-browser "%s"
+Icon=brave-browser
+Name=Brave
+X-XFCE-Commands=brave-browser
+EOF
+
 echo ">> Claude Code (agente de terminal oficial de Anthropic)"
 npm install -g @anthropic-ai/claude-code || echo "!! No se pudo instalar Claude Code ahora; 'roman-setup' lo reintenta en el primer inicio."
 

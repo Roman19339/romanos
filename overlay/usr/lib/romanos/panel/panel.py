@@ -24,6 +24,7 @@ import urllib.request
 from pathlib import Path
 
 import gi
+gi.require_version("Gdk", "3.0")
 gi.require_version("Gtk", "3.0")
 gi.require_version("WebKit2", "4.1")
 from gi.repository import Gdk, Gio, GLib, Gtk, WebKit2  # noqa: E402
@@ -118,7 +119,8 @@ class Panel(Gtk.ApplicationWindow):
         side.pack_start(logo, False, False, 0)
         side.pack_start(sub, False, False, 0)
         for m in self.modulos:
-            b = Gtk.Button(label=f"{m.get('icono','•')}   {m['nombre']}")
+            sufijo = "  ↗" if m.get("motor") == "brave" else ""
+            b = Gtk.Button(label=f"{m.get('icono','•')}   {m['nombre']}{sufijo}")
             b.get_child().set_xalign(0)
             b.set_tooltip_text(m.get("desc", m["nombre"]))
             b.connect("clicked", lambda _b, mid=m["id"]: self.abrir(mid))
@@ -219,9 +221,23 @@ class Panel(Gtk.ApplicationWindow):
     def vista_actual(self):
         return self.stack.get_visible_child()
 
+    def abrir_en_brave(self, m):
+        """Apps de claude.ai: el motor WebKit no las carga, se abren como ventana-app de Brave."""
+        brave = GLib.find_program_in_path("brave-browser") or GLib.find_program_in_path("brave-browser-stable")
+        if not brave:
+            return False
+        args = [brave, "--app=" + m["url"], "--class=romanos-" + m["id"]]
+        if m.get("tipo") == "navegador":
+            args = [brave, m["url"]]
+        Gio.Subprocess.new(args, Gio.SubprocessFlags.STDOUT_SILENCE | Gio.SubprocessFlags.STDERR_SILENCE)
+        subprocess.Popen(["notify-send", "-i", "romanos", m["nombre"], "Abriendo en Brave…"])
+        return True
+
     def abrir(self, mid):
         m = next((x for x in self.modulos if x["id"] == mid), None)
         if not m:
+            return
+        if m.get("motor") == "brave" and self.abrir_en_brave(m):
             return
         if mid not in self.vistas:
             v = self._webview()

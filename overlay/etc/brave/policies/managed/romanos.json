@@ -1,0 +1,23 @@
+{
+  "DefaultSearchProviderEnabled": true,
+  "DefaultSearchProviderName": "Brave",
+  "DefaultSearchProviderKeyword": "brave",
+  "DefaultSearchProviderSearchURL": "https://search.brave.com/search?q={searchTerms}",
+  "DefaultSearchProviderSuggestURL": "https://search.brave.com/api/suggest?q={searchTerms}",
+  "DefaultSearchProviderIconURL": "https://search.brave.com/favicon.ico",
+  "HomepageLocation": "https://search.brave.com",
+  "HomepageIsNewTabPage": false,
+  "RestoreOnStartup": 4,
+  "RestoreOnStartupURLs": [
+    "https://search.brave.com"
+  ],
+  "DefaultBrowserSettingEnabled": false,
+  "MetricsReportingEnabled": false,
+  "PromotionalTabsEnabled": false,
+  "BraveRewardsDisabled": true,
+  "BraveWalletDisabled": true,
+  "BraveVPNDisabled": true,
+  "BraveAIChatEnabled": false,
+  "TorDisabled": true,
+  "PrintingEnabled": true
+}
