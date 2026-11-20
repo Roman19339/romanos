@@ -1,0 +1,11 @@
+[Unit]
+Description=RomanOS · prueba automática de arranque
+ConditionKernelCommandLine=romanos-diag
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/romanos/diagnostico.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -25,7 +25,29 @@ unzip
 calamares
 
 # ---------------- Escritorio RomanOS (sobre XFCE, con capa propia) ----------------
+# Sesión de usuario: sin estos el escritorio se cierra al iniciar sesión
+libpam-systemd
+dbus-user-session
+dbus-x11
+polkitd
+pkexec
+policykit-1-gnome
+at-spi2-core
+gvfs
+udisks2
+upower
+xdg-user-dirs
+xdg-utils
+x11-xserver-utils
+xserver-xorg-video-all
+xserver-xorg-input-all
+virtualbox-guest-x11
 xorg
+xfce4-session
+xfdesktop4
+xfce4-settings
+xfwm4
+xfce4-panel
 lightdm
 lightdm-gtk-greeter
 lightdm-gtk-greeter-settings

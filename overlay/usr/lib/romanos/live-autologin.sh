@@ -9,6 +9,7 @@ for g in sudo adm cdrom audio video plugdev netdev lpadmin caja autologin nopass
   getent group "$g" >/dev/null || groupadd "$g"
   usermod -aG "$g" "$U" 2>/dev/null || true
 done
+mkdir -p "/home/$U" && cp -rn /etc/skel/. "/home/$U/" 2>/dev/null; chown -R "$U:$U" "/home/$U"
 passwd -d "$U" >/dev/null 2>&1 || true
 echo "$U ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/90-romanos-live
 chmod 440 /etc/sudoers.d/90-romanos-live

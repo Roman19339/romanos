@@ -93,7 +93,8 @@ systemctl --global enable romanos-ai.service 2>/dev/null || \
 systemctl --global enable romanos-respaldo.timer 2>/dev/null || \
   { mkdir -p /etc/systemd/user/timers.target.wants && ln -sf /usr/lib/systemd/user/romanos-respaldo.timer /etc/systemd/user/timers.target.wants/romanos-respaldo.timer; }
 systemctl enable cups NetworkManager lightdm 2>/dev/null || true
-chmod 755 /usr/lib/romanos/live-autologin.sh
+chmod 755 /usr/lib/romanos/live-autologin.sh /usr/lib/romanos/diagnostico.sh
+systemctl enable romanos-diag.service 2>/dev/null || ln -sf /usr/lib/systemd/system/romanos-diag.service /etc/systemd/system/multi-user.target.wants/romanos-diag.service
 systemctl enable romanos-live-autologin.service 2>/dev/null || ln -sf /usr/lib/systemd/system/romanos-live-autologin.service /etc/systemd/system/multi-user.target.wants/romanos-live-autologin.service
 # Cajeros: grupo con acceso a impresoras térmicas USB y cajón
 groupadd -f caja
